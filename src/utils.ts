@@ -3,6 +3,23 @@ import { $ } from "bun";
 import fs from "fs";
 import pc from "picocolors"
 
+export async function installTun2Socks() {
+  const version = "2.7.0"
+  const arch = process.arch === "x64" ? "amd64" : "arm64"
+  const url = `https://github.com/xjasonlyu/tun2socks/releases/download/v${version}/tun2socks-linux-${arch}.zip`
+  const path = "/usr/local/bin/tun2socks"
+
+  const response = await fetch(url)
+  if (!response.ok) throw new Error(`HTTTP Error: ${response.status}`)
+
+  await Bun.write("tun2socks.zip", response)
+  await $`unzip -o ./tun2socks.zip`.nothrow()
+
+  await $`mv tun2socks-linux-${arch} ${path}`.nothrow()
+  await $`chmod +x ${path}`.nothrow()
+  await $`rm tun2socks.zip`.nothrow().quiet()
+}
+
 export async function init() {
   if (process.getuid?.() !== 0) {
     console.log(pc.red("This program must be run as root."));
@@ -13,6 +30,11 @@ export async function init() {
   if (exitCode === 1) {
     console.log(pc.red("No default route detected: not connected to any network."));
     process.exit(1);
+  }
+
+  if (!Bun.which("tun2socks")) {
+    console.log(pc.gray("Tun2socks not found, installing..."))
+    await installTun2Socks()
   }
 
   const lockFile = Bun.file(CONFIG.lockFilePath);
