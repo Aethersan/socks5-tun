@@ -1,6 +1,6 @@
 import { $ } from "bun";
 
-const gatewayIp = await $`ip route | awk '/default/ {print $3; exit}'`
+const address = await $`ip route | awk '/default/ {print $3; exit}'`
   .text()
   .then((r) => r.trim());
 
@@ -11,7 +11,7 @@ const mainInterface = await $`ip route | grep default | awk '{print $5; exit}'`
 
 export const CONFIG = {
   mainInterface: process.env.MAIN_INTERFACE ?? mainInterface,
-  gatewayIp: process.env.GATEWAY_IP ?? gatewayIp,
+  address: process.env.SOCKS5_ADDRESS ?? address,
   port: process.env.PORT,
   tunDevice: process.env.TUN_DEVICE ?? "tun0",
   tunIp: process.env.TUN_IP ?? "198.18.0.1",

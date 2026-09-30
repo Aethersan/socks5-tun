@@ -89,7 +89,7 @@ export async function cleanup() {
   isCleaning = true;
 
   await $`ip rule del pref 32000`.nothrow().quiet();
-  await $`ip rule del to ${CONFIG.gatewayIp} lookup main pref 10`
+  await $`ip rule del to ${CONFIG.address} lookup main pref 10`
     .nothrow()
     .quiet();
   await $`ip rule del pref 15`.nothrow().quiet();

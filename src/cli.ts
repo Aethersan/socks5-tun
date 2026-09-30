@@ -14,9 +14,9 @@ cli
     CONFIG.port = port;
     CONFIG.showLogs = options.showLogs;
     if (address === "local") {
-      CONFIG.gatewayIp = "127.0.0.1";
+      CONFIG.address = "127.0.0.1";
     } else if (address !== "gateway") {
-      CONFIG.gatewayIp = address;
+      CONFIG.address = address;
     }
 
     startTunnel();
