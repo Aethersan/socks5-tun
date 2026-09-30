@@ -2,12 +2,13 @@ import { $ } from "bun";
 import { init } from "./utils.ts";
 import { CONFIG } from "./constants.ts";
 import { cleanup } from "./utils.ts";
+import pc from "picocolors"
 
 export async function startTunnel() {
   await init();
   await cleanup();
 
-  console.log("Starting tunnel...");
+  console.log(pc.gray("Starting tunnel..."));
   try {
     await $`ip tuntap add mode tun dev tun0`.nothrow().quiet();
     await $`ip addr add 198.18.0.1/24 dev tun0`.nothrow();
@@ -32,9 +33,13 @@ export async function startTunnel() {
       `socks5://${CONFIG.gatewayIp}:${CONFIG.port}`,
     ]);
 
-    console.log("Tunnel started successfully");
-  } catch (err) {
-    console.log("Failed to start tunnel:", err);
+    console.log(pc.green("Tunnel started successfully"));
+  } catch (err: any) {
+    if (err.code === "ENOENT") {
+      console.log(pc.red("Error: tun2socks not found"));
+    } else {
+      console.log(pc.red("Failed to start tunnel:\n"), err);
+    }
     await cleanup();
   }
 }

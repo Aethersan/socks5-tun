@@ -1,16 +1,17 @@
 import { CONFIG } from "./constants";
 import { $ } from "bun";
 import fs from "fs";
+import pc from "picocolors"
 
 export async function init() {
   if (process.getuid?.() !== 0) {
-    console.log("This program must be run as root.");
+    console.log(pc.red("This program must be run as root."));
     process.exit(1);
   }
 
   const { exitCode } = await $`ip route | grep "^default"`.nothrow().quiet();
   if (exitCode === 1) {
-    console.log("No default route detected: not connected to any network.");
+    console.log(pc.red("No default route detected: not connected to any network."));
     process.exit(1);
   }
 
@@ -19,11 +20,11 @@ export async function init() {
     const savedPid = await lockFile.text();
     try {
       process.kill(parseInt(savedPid), 0);
-      console.error("Another instance is already running.");
+      console.error(pc.red("Another instance is already running."));
       process.exit(1);
     } catch (err: any) {
       if (err.code === "ESRCH") {
-        console.log("Process not found, removing lock file.");
+        console.log(pc.gray("Process not found, removing lock file."));
         fs.unlinkSync(CONFIG.lockFilePath);
       } else {
         console.error(err);
