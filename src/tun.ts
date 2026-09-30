@@ -2,7 +2,7 @@ import { $ } from "bun";
 import { init } from "./utils.ts";
 import { CONFIG } from "./constants.ts";
 import { cleanup } from "./utils.ts";
-import pc from "picocolors"
+import pc from "picocolors";
 
 export async function startTunnel() {
   await init();
@@ -21,17 +21,21 @@ export async function startTunnel() {
 
     await $`sysctl -w net.ipv4.conf.all.rp_filter=0`.quiet();
 
-    Bun.spawn([
+    const tun2socksArgs = [
       CONFIG.tun2socksPath,
       "--loglevel",
       CONFIG.showLogs ? "info" : "error",
       "--device",
       "tun://tun0",
-      "--interface",
-      CONFIG.mainInterface,
       "--proxy",
       `socks5://${CONFIG.gatewayIp}:${CONFIG.port}`,
-    ]);
+    ];
+
+    if (CONFIG.gatewayIp !== "127.0.0.1") {
+      tun2socksArgs.push("--interface", CONFIG.mainInterface);
+    }
+
+    Bun.spawn(tun2socksArgs);
 
     console.log(pc.green("Tunnel started successfully"));
   } catch (err: any) {
