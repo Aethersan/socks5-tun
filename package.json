@@ -1,9 +1,8 @@
 {
   "name": "socks5-tun",
-  "module": "index.ts",
   "scripts": {
-    "dev": "bun run ./src/index.ts",
-    "build": "bun build --compile --minify ./src/index.ts --outfile ./dist/socks5-tun"
+    "dev": "bun run ./src/cli.ts",
+    "build": "bun build --compile --minify ./src/cli.ts --outfile ./dist/socks5-tun"
   },
   "private": true,
   "devDependencies": {
@@ -13,6 +12,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@clack/prompts": "1.8.1"
+    "@clack/prompts": "1.8.1",
+    "cac": "^7.0.0"
   }
 }

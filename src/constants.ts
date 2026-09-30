@@ -1,4 +1,3 @@
-import { getUserHome } from "./utils.ts";
 import { $ } from "bun";
 
 const gatewayIp = await $`ip route | awk '/default/ {print $3; exit}'`
@@ -13,11 +12,10 @@ const mainInterface = await $`ip route | grep default | awk '{print $5; exit}'`
 export const CONFIG = {
   mainInterface: process.env.MAIN_INTERFACE ?? mainInterface,
   gatewayIp: process.env.GATEWAY_IP ?? gatewayIp,
-  port: process.env.PORT ?? 2080,
+  port: process.env.PORT,
   tunDevice: process.env.TUN_DEVICE ?? "tun0",
   tunIp: process.env.TUN_IP ?? "198.18.0.1",
-  tun2socksPath: process.env.TUN2SOCKS_PATH ?? `${getUserHome()}/bin/tun2socks`,
+  tun2socksPath: process.env.TUN2SOCKS_PATH ?? `/usr/local/bin/tun2socks`,
   lockFilePath: "/tmp/socks5-tun.lock",
-  backupRoutes: "/tmp/vpn-backup-routes",
   showLogs: process.env.SHOW_LOGS?.toLowerCase() === "true",
 };
