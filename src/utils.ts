@@ -12,12 +12,12 @@ export async function installTun2Socks() {
   const response = await fetch(url)
   if (!response.ok) throw new Error(`HTTTP Error: ${response.status}`)
 
-  await Bun.write("tun2socks.zip", response)
-  await $`unzip -o ./tun2socks.zip`.nothrow()
+  await Bun.write("/tmp/tun2socks.zip", response)
+  await $`unzip -o /tmp/tun2socks.zip`.nothrow()
 
-  await $`mv tun2socks-linux-${arch} ${path}`.nothrow()
+  await $`mv /tmp/tun2socks-linux-${arch} ${path}`.nothrow()
   await $`chmod +x ${path}`.nothrow()
-  await $`rm tun2socks.zip`.nothrow().quiet()
+  await $`rm /tmp/tun2socks.zip`.nothrow().quiet()
 }
 
 export async function init() {
