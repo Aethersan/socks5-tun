@@ -1,15 +1,16 @@
 # socks5-tun
 
-To install dependencies:
+Build:
 
 ```bash
-bun install
+git clone https://github.com/Aethersan/socks5-tun.git --depth 1
+cd socks5-tun
+bun install && bun run build
+cd dist
 ```
 
-To run:
+Usage:
 
 ```bash
-bun run index.ts
+sudo socks5-tun run <ip> 2080 --show-logs
 ```
-
-This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
