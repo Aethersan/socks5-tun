@@ -3,8 +3,8 @@ import { $ } from "bun";
 const routes = await $`ip -j route show`.quiet().json()
 const defaultRoute = routes.find((route: any) => route.dst === "default")
 
-const address = defaultRoute.gateway
-const mainInterface = defaultRoute.dev
+const address = defaultRoute?.gateway
+const mainInterface = defaultRoute?.dev
 
 export const CONFIG = {
   mainInterface,
