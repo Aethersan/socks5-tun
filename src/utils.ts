@@ -89,9 +89,11 @@ export async function cleanup() {
   isCleaning = true;
 
   await $`ip rule del pref 32000`.nothrow().quiet();
-  await $`ip rule del to ${CONFIG.address} lookup main pref 10`
-    .nothrow()
-    .quiet();
+  for (const address of CONFIG.excludedAddresses) {
+    await $`ip rule del to ${address} lookup main pref 10`
+      .nothrow()
+      .quiet();
+  }
   await $`ip rule del pref 15`.nothrow().quiet();
 
   await $`ip link set dev tun0 down`.nothrow().quiet();

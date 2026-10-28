@@ -9,13 +9,20 @@ export async function startTunnel() {
   await cleanup();
 
   console.log(pc.gray("Starting tunnel..."));
+  const isLocalProxy = CONFIG.address === "127.0.0.1"
   try {
     await $`ip tuntap add mode tun dev tun0`.nothrow().quiet();
     await $`ip addr add 198.18.0.1/24 dev tun0`.nothrow();
     await $`ip link set dev tun0 up`.nothrow().quiet();
 
     await $`ip route add default dev tun0 table 200`;
-    await $`ip rule add to ${CONFIG.address} lookup main pref 10`;
+
+    if (!isLocalProxy) {
+      CONFIG.excludedAddresses.push(CONFIG.address);
+    }
+    for (const address of CONFIG.excludedAddresses) {
+      await $`ip rule add to ${address} lookup main pref 10`;
+    }
     await $`ip rule add from all lookup main suppress_prefixlength 0 pref 15`;
     await $`ip rule add from all lookup 200 pref 32000`;
 
@@ -31,7 +38,7 @@ export async function startTunnel() {
       `socks5://${CONFIG.address}:${CONFIG.port}`,
     ];
 
-    if (CONFIG.address !== "127.0.0.1") {
+    if (!isLocalProxy) {
       tun2socksArgs.push("--interface", CONFIG.mainInterface);
     }
 

@@ -5,14 +5,13 @@ import { startTunnel } from "./tun.ts";
 const cli = cac();
 
 cli
-  .command(
-    "run <address>, <port>",
-    "Run the SOCKS5 tunnel (address presets: gateway, local)",
-  )
+  .command("run <address>, <port>", "Run the SOCKS5 tunnel (address presets: gateway, local)")
   .option("--show-logs [show-logs]", "Show tun2socks logs", { default: false })
+  .option("--exclude", "IP or CIDR to exclude from the tunnel (192.168.0.0/16,...)")
   .action((address, port, options) => {
     CONFIG.port = port;
     CONFIG.showLogs = options.showLogs;
+    CONFIG.excludedAddresses.push(...options.exclude.split(",").map((a: string) => a.trim()));
     if (address === "local") {
       CONFIG.address = "127.0.0.1";
     } else if (address !== "gateway") {
@@ -24,7 +23,7 @@ cli
 
 cli.help();
 
-cli.version("1.0.0");
+cli.version("1.1.0");
 
 try {
   cli.parse();
