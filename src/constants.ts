@@ -10,8 +10,6 @@ interface ConfigType {
   mainInterface: string;
   address: string;
   port: number;
-  tunDevice: string;
-  tunIp: string;
   tun2socksPath: string;
   lockFilePath: string;
   showLogs: boolean;
@@ -22,8 +20,6 @@ export const CONFIG: ConfigType = {
   mainInterface,
   address,
   port: 2080,
-  tunDevice: "tun0",
-  tunIp: "198.18.0.1",
   tun2socksPath: `/usr/local/bin/tun2socks`,
   lockFilePath: "/tmp/socks5-tun.lock",
   showLogs: false,
