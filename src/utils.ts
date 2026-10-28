@@ -16,3 +16,8 @@ export async function installTun2Socks() {
   await $`chmod +x ${path}`.nothrow()
   await $`rm /tmp/tun2socks.zip`.nothrow().quiet()
 }
+
+export function getAddresses(addresses: string) {
+  if (!addresses) return [];
+  return addresses.split(",").map((a: string) => a.trim())
+}

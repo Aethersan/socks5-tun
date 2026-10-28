@@ -13,9 +13,11 @@ export async function startTunnel() {
   try {
     await $`ip tuntap add mode tun dev tun0`.nothrow().quiet();
     await $`ip addr add 198.18.0.1/24 dev tun0`.nothrow();
+    await $`ip -6 addr add fd42:1234:5678::1/126 dev tun0`;
     await $`ip link set dev tun0 up`.nothrow().quiet();
 
     await $`ip route add default dev tun0 table 200`;
+    await $`ip -6 route add default dev tun0 table 200`;
 
     if (!isLocalProxy) {
       CONFIG.excludedAddresses.push(CONFIG.address);
@@ -23,8 +25,13 @@ export async function startTunnel() {
     for (const address of CONFIG.excludedAddresses) {
       await $`ip rule add to ${address} lookup main pref 10`;
     }
+    for (const address of CONFIG.excludedIPv6Addresses) {
+      await $`ip -6 rule add to ${address} lookup main pref 10`;
+    }
     await $`ip rule add from all lookup main suppress_prefixlength 0 pref 15`;
     await $`ip rule add from all lookup 200 pref 32000`;
+    await $`ip -6 rule add from all lookup main suppress_prefixlength 0 pref 15`;
+    await $`ip -6 rule add from all lookup 200 pref 32000`;
 
     await $`sysctl -w net.ipv4.ip_default_ttl=65`.quiet()
     await $`sysctl -w net.ipv4.conf.all.rp_filter=0`.quiet();
@@ -131,6 +138,14 @@ export async function cleanup() {
       .quiet();
   }
   await $`ip rule del pref 15`.nothrow().quiet();
+
+  await $`ip -6 rule del pref 32000`.nothrow().quiet();
+  for (const address of CONFIG.excludedIPv6Addresses) {
+    await $`ip -6 rule del to ${address} lookup main pref 10`
+      .nothrow()
+      .quiet();
+  }
+  await $`ip -6 rule del pref 15`.nothrow().quiet();
 
   await $`ip link set dev tun0 down`.nothrow().quiet();
   await $`ip link del dev tun0`.nothrow().quiet();

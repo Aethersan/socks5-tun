@@ -14,6 +14,7 @@ interface ConfigType {
   lockFilePath: string;
   showLogs: boolean;
   excludedAddresses: string[];
+  excludedIPv6Addresses: string[]
 }
 
 export const CONFIG: ConfigType = {
@@ -29,5 +30,12 @@ export const CONFIG: ConfigType = {
     "10.0.0.0/8",
     "172.16.0.0/12",
     "169.254.0.0/16",
+    "224.0.0.0/4"
+  ],
+  excludedIPv6Addresses: [
+    "::1/128",
+    "fc00::/7",
+    "fe80::/10",
+    "ff00::/8",
   ],
 };
