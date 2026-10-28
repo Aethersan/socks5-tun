@@ -99,6 +99,7 @@ export async function cleanup() {
   await $`ip link set dev tun0 down`.nothrow().quiet();
   await $`ip link del dev tun0`.nothrow().quiet();
 
+  await $`sysctl -w net.ipv4.ip_default_ttl=64`.quiet()
   await $`sysctl -w net.ipv4.conf.all.rp_filter=1`.quiet();
 
   isCleaning = false;

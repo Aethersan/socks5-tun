@@ -26,6 +26,7 @@ export async function startTunnel() {
     await $`ip rule add from all lookup main suppress_prefixlength 0 pref 15`;
     await $`ip rule add from all lookup 200 pref 32000`;
 
+    await $`sysctl -w net.ipv4.ip_default_ttl=65`.quiet()
     await $`sysctl -w net.ipv4.conf.all.rp_filter=0`.quiet();
 
     const tun2socksArgs = [
